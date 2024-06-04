@@ -4,23 +4,23 @@
       <img :src="require(`@/assets/login/${langValue||'zh'}.png`)" alt="" srcset="">
       <span>{{ langValue||'zh' }}</span>
     </div> -->
-    <!-- <div class="radius_left"></div>
-    <div class="radius_top"></div> -->
+    <div class="radius_left"></div>
+    <div class="radius_top"></div>
     <div class="login-box">
-      <!-- <div class="login-left">
+      <div class="login-left">
         <img src="@/assets/login/side-logo.png">
-      </div> -->
+      </div>
       <div class="login-form">
         <div class="login-title">
           <img class="icon" src="../../assets/login/avatar.png" alt="logo">
           <!-- <h2 class="title">{{ $t('sys_l002') }}</h2> -->
           <!-- <h2 class="title">iMX</h2> -->
-          <h2 class="title">三花任务管理系统</h2>
+          <h2 class="title">Bees SCRM</h2>
         </div>
         <div class="account_type">
           <span class="left_text">{{$t('sys_l057')}}</span>
           <el-radio-group v-model="loginForm.seatName" @change="changeAccount">
-            <el-radio v-for="(item, idx) in accountOption" v-show="item != ''" :key="idx" :label="idx">{{ item }}</el-radio>
+            <el-radio border v-for="(item, idx) in accountOption" v-show="item != ''" :key="idx" :label="idx">{{ item }}</el-radio>
           </el-radio-group>
         </div>
         <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
@@ -57,14 +57,14 @@
                 <a href="javascript:;" @click="viewXieyi(1)">《隐私政策》</a>
               </span>
             </el-checkbox>
-            <!-- <div class="service_tg" @click="jumpServeTg">
+            <div class="service_tg" @click="jumpServeTg">
               <span class="icon_img">
                 <img src="../../assets/tg_icon.png" alt="" srcset=""> 
               </span>
               <span>
                 {{ $t('sys_l107') }}
               </span>
-            </div> -->
+            </div>
           </el-form-item>
         </el-form>
       </div>
@@ -151,12 +151,8 @@ export default {
               } else {
                 this.$router.push({ path: '/' })
               }
-              this.$notify({
-                title: this.$t('sys_l013'),
-                message: this.$t('sys_l012'),
-                type: 'success',
-                duration: 3000,
-              })
+              this.$notify({title: this.$t('sys_l013'),message: this.$t('sys_l012'),type: 'success',duration: 3000})
+              // this.$store.dispatch('app/showNotice',true);
             }
             this.loading = false
           }, 1000)
