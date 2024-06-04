@@ -4,14 +4,14 @@
 
     <!-- <breadcrumb id="breadcrumb-container" class="breadcrumb-container" /> -->
     <div class="right-menu">
-      <div class="serveic_img" @click="jumpServeTg">
+      <!-- <div class="serveic_img" @click="jumpServeTg">
         <span class="icon_img">
           <img src="../../assets/tg_icon.png" alt="" srcset=""> 
         </span>
         <span>
           {{ $t('sys_l107') }}
         </span>
-      </div>
+      </div> -->
       <div class="sys_use_time">
         {{ $t('sys_l019') }}：
         <span :class="{'expire_tips':expireTime}">

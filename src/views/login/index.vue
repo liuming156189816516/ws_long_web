@@ -57,14 +57,14 @@
                 <a href="javascript:;" @click="viewXieyi(1)">《隐私政策》</a>
               </span>
             </el-checkbox>
-            <div class="service_tg" @click="jumpServeTg">
+            <!-- <div class="service_tg" @click="jumpServeTg">
               <span class="icon_img">
                 <img src="../../assets/tg_icon.png" alt="" srcset=""> 
               </span>
               <span>
                 {{ $t('sys_l107') }}
               </span>
-            </div>
+            </div> -->
           </el-form-item>
         </el-form>
       </div>
