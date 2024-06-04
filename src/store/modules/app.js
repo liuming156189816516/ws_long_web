@@ -6,7 +6,6 @@ const state = {
     opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
     withoutAnimation: false
   },
-  updateEvent:false,
   device: 'desktop',
   locaLang: Cookies.get('lang')||'zh',
   size: Cookies.get('size') || 'medium'
@@ -35,12 +34,9 @@ const mutations = {
     Cookies.set('size', size)
   },
   SET_LANGUAGE: (state, lang) => {
-    i18n.locale = lang;
-    state.locaLang = lang;
-    Cookies.set('lang', lang)
-  },
-  SET_UPDATE_NOTICE: (state, tips) => {
-    state.updateEvent = tips;
+      i18n.locale = lang;
+      state.locaLang = lang;
+      Cookies.set('lang', lang)
   }
 }
 
@@ -59,9 +55,6 @@ const actions = {
   },
   switchLang({ commit }, lang) {
     commit('SET_LANGUAGE', lang=='zh'?'en':'zh')
-  },
-  showNotice({ commit }, state) {
-    commit('SET_UPDATE_NOTICE', state)
   }
 }
 
