@@ -27,9 +27,9 @@
             <el-button icon="el-icon-refresh-right" @click="resetQuery">{{ $t('sys_c049') }}</el-button>
           </el-form-item>
   
-          <!-- <el-form-item class="fr">
+          <el-form-item class="fr">
             自动炸群: <el-switch v-model="auto_scamper" active-text="开启" inactive-text="关闭" @change="handleScamper" />
-          </el-form-item> -->
+          </el-form-item>
         </el-form>
         <!-- 分组管理 -->
         <div class="continer_main">
@@ -398,11 +398,11 @@
           return sums;
         },
         async initGroupConfig(){
-          const {data:{auto_pull_group}} = await getsysconfig();
-          this.auto_scamper = auto_pull_group==1?true:false;
+          const {data:{auto_big_group}} = await getsysconfig();
+          this.auto_scamper = auto_big_group==1?true:false;
         },
         async handleScamper(e){
-          const {code} = await upsysconfig({auto_pull_group:this.auto_scamper?1:0});
+          const {code} = await upsysconfig({auto_big_group:this.auto_scamper?1:0});
           if (code !=0 ) return;
           this.auto_scamper = e;
           successTips(this)
