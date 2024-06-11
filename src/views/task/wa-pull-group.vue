@@ -43,6 +43,13 @@
               @selection-change="handleSelectionChange" @row-click="rowSelectChange">  
               <el-table-column type="selection" width="55" />
               <el-table-column prop="name" :label="$t('sys_g070')" width="120" />
+              <el-table-column prop="qname" :label="$t('sys_rai086')" width="120">
+                  <template slot-scope="scope">
+                    <el-tooltip class="item" effect="dark" :content="scope.row.qname" placement="top">
+                      <div style="width: 100px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{ scope.row.qname||"-" }}</div>
+                    </el-tooltip>
+                  </template>
+              </el-table-column>
               <el-table-column prop="pull_group_name" :label="$t('sys_rai088')" minWidth="120" />
               <el-table-column prop="ad_group_name" :label="$t('sys_rai089')" minWidth="120" />
               <el-table-column prop="data_pack_name" :label="$t('sys_rai090')" width="120" />
