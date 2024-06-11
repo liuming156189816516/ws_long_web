@@ -147,7 +147,10 @@
                                     <el-table-column prop="content" :label="$t('sys_mat019')" minWidth="100">
                                         <template slot-scope="scope">
                                             <span class="content_01" v-if="scope.row.type==1||scope.row.type==5||scope.row.type==6||scope.row.type==7">{{ scope.row.content }}</span>
-                                            <img class="content_02" v-if="scope.row.type==2" :src="scope.row.content" alt="" srcset="">
+                                            <div v-if="scope.row.type==2">
+                                                <img class="content_02" :src="scope.row.content">
+                                                <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="scope.row.remark" />
+                                            </div>
                                             <audio v-if="scope.row.type==3" controls class="audio_src">
                                                 <source :src="scope.row.content" type="audio/mpeg">
                                             </audio>
@@ -367,18 +370,19 @@
         },
         getChildren(msg){
             this.showSource=false;
+            let item = JSON.parse(msg);
+            msg.type==2?item.remark="":"";
             if (this.source_id) {
                 for (let k = 0; k < this.taskForm.materialData.length; k++) {
                     if (this.taskForm.materialData[k].id == this.source_id) {
-                        this.$set(this.taskForm.materialData,k,JSON.parse(msg))
+                        this.$set(this.taskForm.materialData,k,item)
                     }
                 }
             }else{
-                this.taskForm.materialData.push(JSON.parse(msg))
+                this.taskForm.materialData.push(item)
             }
         },
         editScript(row,idx){
-            console.log(row);
             if (row.type == 6) {
                 this.showLink = true;
                 this.is_index = idx.$index;

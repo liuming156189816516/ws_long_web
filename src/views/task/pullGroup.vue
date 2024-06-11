@@ -216,7 +216,10 @@
                 <el-table-column prop="content" :label="$t('sys_mat019')" minWidth="100">
                     <template slot-scope="scope">
                         <span class="content_01" v-if="scope.row.type==1||scope.row.type==5||scope.row.type==6||scope.row.type==7">{{ scope.row.content }}</span>
-                        <img class="content_02" v-if="scope.row.type==2" :src="scope.row.content" @click="showSkyBtn(scope.row)">
+                        <div v-if="scope.row.type==2" style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+                          <img class="content_02" :src="scope.row.content" @click="showSkyBtn(scope.row)">
+                          <span style="display: flex;line-height: 1;margin-top: 3px;font-size: 12px;">{{ scope.row.remark }}</span>
+                        </div>
                         <audio v-if="scope.row.type==3" controls class="audio_src">
                             <source :src="scope.row.content" type="audio/mpeg">
                         </audio>
