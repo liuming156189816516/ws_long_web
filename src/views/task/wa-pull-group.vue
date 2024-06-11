@@ -46,7 +46,7 @@
               <el-table-column prop="pull_group_name" :label="$t('sys_rai088')" minWidth="120" />
               <el-table-column prop="ad_group_name" :label="$t('sys_rai089')" minWidth="120" />
               <el-table-column prop="data_pack_name" :label="$t('sys_rai090')" width="120" />
-              <el-table-column prop="ad" show-overflow-tooltip :label="$t('sys_rai091')" minWidth="120" />
+              <!-- <el-table-column prop="ad" show-overflow-tooltip :label="$t('sys_rai091')" minWidth="120" /> -->
               <el-table-column prop="zq_num" :label="$t('sys_rai095')" minWidth="100" />
               <el-table-column prop="is_announcement" :label="$t('sys_q131')" minWidth="100">
                 <template slot-scope="scope">
@@ -285,7 +285,6 @@
           if (valid) {
             this.isLoading=true;
             let ids = this.taskForm.relpy_type==1?this.checkIdArry:[this.taskForm.relpy_id];
-            console.log(ids);
             groupsendmsg({ids:ids,ad:this.taskForm.relpy_text}).then(res=>{
               this.isLoading=false;
               if (res.code !=0 ) return;

@@ -76,13 +76,13 @@
               <el-table-column prop="ad_account" label="营销账号" width="100">
                   <template slot-scope="scope">{{ scope.row.ad_account||"-" }}</template>
               </el-table-column>
-              <el-table-column prop="ad" :label="$t('sys_rai091')" minWidth="120">
+              <!-- <el-table-column prop="ad" :label="$t('sys_rai091')" minWidth="120">
                   <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" :content="scope.row.ad" placement="top">
                       <div style="width: 120px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{ scope.row.ad||"-" }}</div>
                     </el-tooltip>
                   </template>
-              </el-table-column>
+              </el-table-column> -->
               <el-table-column prop="match_num" :label="$t('sys_q131')" width="100">
                 <template slot-scope="scope">
                   <el-button class="jump_un_link"type="text" :disabled="!scope.row.material_list" @click.stop="scamperBtn(scope.row,1)">{{ scope.row.material_list==null?0:scope.row.material_list.length }}</el-button>

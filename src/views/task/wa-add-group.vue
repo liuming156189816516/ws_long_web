@@ -73,13 +73,13 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row :gutter="20">
+                <!-- <el-row :gutter="20">
                     <el-col :span="18">
                         <el-form-item label="话术内容：" prop="relpy_text">
                             <el-input type="textarea" clearable v-model="taskForm.relpy_text" placeholder="请输入话术内容" rows="6" />
                         </el-form-item>
                     </el-col>
-                </el-row>
+                </el-row> -->
                 <el-row :gutter="20">
                     <el-col :span="18">
                         <el-form-item :label="$t('sys_q109')+'：'" prop="materialData" class="custom_say">
@@ -322,7 +322,7 @@
                         //     material_num:this.taskForm.materialData.length,
                         //     replenish:this.taskForm.set_add
                         // }),
-                        ad:this.taskForm.relpy_text,
+                        // ad:this.taskForm.relpy_text,
                         name:this.taskForm.task_name,
                         qname:this.taskForm.group_name,
                         pull_group_id:this.taskForm.pull_group,

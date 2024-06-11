@@ -125,13 +125,13 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row :gutter="20">
+                <!-- <el-row :gutter="20">
                     <el-col :span="18">
                         <el-form-item label="群发话术：" prop="relpy_text">
                             <el-input type="textarea" clearable v-model="taskForm.relpy_text" maxlength="2000" show-word-limit placeholder="请输入群发内容" rows="6" />
                         </el-form-item>
                     </el-col>
-                </el-row>
+                </el-row> -->
                 <el-row :gutter="20">
                     <el-col :span="18">
                         <el-form-item :label="$t('sys_q131')+'：'" prop="materialData" class="custom_say">
@@ -337,7 +337,7 @@
                         target_num:Number(this.taskForm.target_num),
                         match_num:Number(this.taskForm.match_num),
                         invite_link:this.taskForm.invite_link,
-                        ad:this.taskForm.relpy_text,
+                        // ad:this.taskForm.relpy_text,
                         material_list:this.taskForm.materialData
                     }
                     this.isLoading=true;
