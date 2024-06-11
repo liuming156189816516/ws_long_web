@@ -82,7 +82,7 @@
                 </el-row> -->
                 <el-row :gutter="20">
                     <el-col :span="18">
-                        <el-form-item :label="$t('sys_q109')+'：'" prop="materialData" class="custom_say">
+                        <el-form-item :label="$t('sys_q131')+'：'" prop="materialData" class="custom_say">
                             <div class="mess_01">
                                 <el-button type="primary" size="mini" v-for="(item,idx) in btnOption" :key="idx" @click="showPropModel(idx)" v-show="item!=''">{{ item }}</el-button>
                                 <el-table :data="taskForm.materialData" :header-cell-style="{ color: '#909399', textAlign: 'center' }" :cell-style="{ textAlign: 'center' }" style="width: 100%">
@@ -239,6 +239,7 @@
                 pull_group: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
                 market_group: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
                 data_pack_id: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
+                materialData: [{required: true, required: true, message: this.$t('sys_c052'), trigger: 'change' }],
                 is_announcement: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }]
             }
         },
@@ -286,6 +287,7 @@
             }else{
                 this.taskForm.materialData.push(item)
             }
+            this.$refs.taskForm.clearValidate('materialData');
         },
         changeAccountNum(){
             let numbers = this.accountGroupList.filter(item => {return item.group_id == this.taskForm.group_id});

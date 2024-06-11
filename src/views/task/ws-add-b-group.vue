@@ -275,6 +275,7 @@
                 match_num: [{ required: true, message: this.$t('sys_mat021'), trigger: 'blur' }],
                 invite_link: [{ required: true, message: this.$t('sys_mat021'), trigger: 'blur' }],
                 data_pack_id: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
+                materialData: [{required: true, required: true, message: this.$t('sys_c052'), trigger: 'change' }],
                 relpy_text: [{ required: true, message: this.$t('sys_mat021'), trigger: 'blur' },{ max: 2000, message: '最多可输入2000个字符', trigger: 'blur' }],
             }
         },
@@ -381,6 +382,7 @@
             }else{
                 this.taskForm.materialData.push(item)
             }
+            this.$refs.taskForm.clearValidate('materialData');
         },
         editScript(row,idx){
             if (row.type == 6) {
