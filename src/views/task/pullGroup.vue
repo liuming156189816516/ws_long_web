@@ -83,6 +83,12 @@
                     </el-tooltip>
                   </template>
               </el-table-column>
+              <el-table-column prop="match_num" :label="$t('sys_q131')" width="100">
+                <template slot-scope="scope">
+                  <el-button class="jump_un_link"type="text" :disabled="!scope.row.material_list" @click.stop="scamperBtn(scope.row,1)">{{ scope.row.material_list==null?0:scope.row.material_list.length }}</el-button>
+                  <!-- <div class="jump_un_link" @click.stop="scamperBtn(scope.row,1)"></div> -->
+                </template>
+              </el-table-column>
               <el-table-column prop="status" :label="$t('sys_rai001')" width="100">
                 <template slot="header">
                   <el-dropdown trigger="click" size="medium " @command="(command) => handleNewwork(command)">
@@ -100,9 +106,9 @@
               </el-table-column>
               <el-table-column prop="zq_num" label="炸群次数" width="100" />
               <el-table-column prop="match_num" label="拉手数量" width="100">
-                  <template slot-scope="scope">
-                      <div class="jump_un_link" @click.stop="showMatch(scope.row)">{{ scope.row.match_num||0 }}</div>
-                  </template>
+                <template slot-scope="scope">
+                  <div class="jump_un_link" @click.stop="showMatch(scope.row)">{{ scope.row.match_num||0 }}</div>
+                </template>
               </el-table-column>
               <el-table-column prop="pull_num" label="单次拉人数" minWidth="120" />
               <el-table-column prop="end_num" label="截止人数" width="100" />
@@ -141,7 +147,7 @@
               </el-table-column> -->
               <el-table-column fixed="right" :label="$t('sys_c010')" minWidth="180">
                   <template slot-scope="scope">
-                    <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="scamperBtn(scope.row)">{{ $t('sys_rai098') }}</el-button>
+                    <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="scamperBtn(scope.row,2)">{{ $t('sys_rai098') }}</el-button>
                     <el-button v-if="scope.row.status==1" :disabled="checkIdArry.length>0" :type="scope.row.status==1?'primary':'danger'" plain size="mini" @click.stop="handleTaskBtn(scope.row)">
                       <span v-text="scope.row.status==1?'启动任务':'关闭任务'"></span>
                     </el-button>
@@ -185,25 +191,61 @@
             </el-table>
           </template>
         </el-dialog>
-        <el-dialog :title="$t('sys_rai098')" :visible.sync="blastDialog" :close-on-click-modal="false" width="560px" center>
-          <el-form :model="blastForm" size="small" :rules="blastRules" ref="blastForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item :label="$t('sys_rai104')+'：'" prop="relpy_text">
-              <el-input type="textarea" clearable v-model="blastForm.relpy_text" :placeholder="$t('sys_g129')" rows="8" />
-            </el-form-item>
-            <el-form-item>
-              <div class="el-item-right">
-                <el-button @click="blastDialog=false">{{ $t('sys_c023') }}</el-button>
-                <el-button type="primary" :loading="isLoading" @click="submitForm('blastForm')">{{ $t('sys_c024') }}</el-button>
-              </div>
-            </el-form-item>
-          </el-form>
+        <el-dialog :title="blastForm.relpy_type==2?$t('sys_rai098'):$t('sys_q131')" :visible.sync="blastDialog" :close-on-click-modal="false" width="560px" center>
+          <template v-if="blastForm.relpy_type==2">
+            <el-form :model="blastForm" size="small" :rules="blastRules" ref="blastForm" label-width="100px" class="demo-ruleForm">
+              <el-form-item :label="$t('sys_rai104')+'：'" prop="relpy_text">
+                <el-input type="textarea" clearable v-model="blastForm.relpy_text" :placeholder="$t('sys_g129')" rows="8" />
+              </el-form-item>
+              <el-form-item>
+                <div class="el-item-right">
+                  <el-button @click="blastDialog=false">{{ $t('sys_c023') }}</el-button>
+                  <el-button type="primary" :loading="isLoading" @click="submitForm('blastForm')">{{ $t('sys_c024') }}</el-button>
+                </div>
+              </el-form-item>
+            </el-form>
+          </template>
+          <template v-else>
+            <el-table :data="materialData" :header-cell-style="{ color: '#909399', textAlign: 'center' }" :cell-style="{ textAlign: 'center' }" style="width: 100%">
+                <el-table-column type="index" :label="$t('sys_g020')"></el-table-column>
+                <el-table-column prop="type" :label="$t('sys_g091')" minWidth="120">
+                    <template slot-scope="scope">
+                      <span>{{ sourceOption[scope.row.type]}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="content" :label="$t('sys_mat019')" minWidth="100">
+                    <template slot-scope="scope">
+                        <span class="content_01" v-if="scope.row.type==1||scope.row.type==5||scope.row.type==6||scope.row.type==7">{{ scope.row.content }}</span>
+                        <img class="content_02" v-if="scope.row.type==2" :src="scope.row.content" @click="showSkyBtn(scope.row)">
+                        <audio v-if="scope.row.type==3" controls class="audio_src">
+                            <source :src="scope.row.content" type="audio/mpeg">
+                        </audio>
+                        <video v-if="scope.row.type==4" width="60" height="35" controls>
+                            <source :src="scope.row.content" type="video/mp4">
+                        </video>
+                    </template>
+                </el-table-column>
+                <!-- <el-table-column prop="address" :label="$t('sys_c010')" width="120">
+                    <template slot-scope="scope">
+                        <el-button class="custom_btn" size="mini" v-if="scope.row.type!=5" @click="editScript(scope.row,scope)">
+                            <i class="el-icon-edit" />
+                        </el-button>
+                        <el-button class="custom_btn" size="mini" @click="delScript(scope)">
+                            <i class="el-icon-delete-solid" />
+                        </el-button>
+                    </template>
+                </el-table-column> -->
+            </el-table>
+          </template>
         </el-dialog>
+        <el-image-viewer v-if="imgModel" :on-close="closeViewer" style="z-index:9999" @click.native="cloneImgpreview" :url-list="[taskForm.img]" />
     </div>
   </template>
   <script>
   import { successTips } from '@/utils/index'
-  import { getbiggrouptasklist,groupsendmsg,startbiggrouptask,dobatchstoppullgrouptask,dobatchclosepullgrouptask,getsysconfig,upsysconfig,dobatchdelbiggrouptask,getbiggrouppullaccountlist,biggroupsendmsg} from '@/api/task'
+  import { getbiggrouptasklist,startbiggrouptask,dobatchstoppullgrouptask,dobatchclosepullgrouptask,getsysconfig,upsysconfig,dobatchdelbiggrouptask,getbiggrouppullaccountlist,biggroupsendmsg} from '@/api/task'
   export default {
+    components: {'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
     data() {
       return {
         model1: {
@@ -217,6 +259,7 @@
           relpy_type:"",
           relpy_id:"",
           relpy_text:"",
+          img:""
         },
         blastForm:{
           relpy_type:null,
@@ -224,6 +267,7 @@
           relpy_id:"",
         },
         dialogTitle:"",
+        imgModel:false,
         loading:false,
         isLoading:false,
         blastDialog:false,
@@ -231,7 +275,8 @@
         matchDataList:[],
         checkIdArry:[],
         taskDataList:[],
-        showNum:[11],
+        showNum:[12],
+        materialData:[],
         dialogVisible:false
       }
     },
@@ -266,6 +311,12 @@
       },
       statusOptions(){
         return ["",this.$t('sys_l071'),this.$t('sys_l072'),this.$t('sys_g068'),this.$t('sys_rai078'),this.$t('sys_mat047')]
+      },
+      statusOptions(){
+        return ["",this.$t('sys_l071'),this.$t('sys_l072'),this.$t('sys_g068'),this.$t('sys_rai078'),this.$t('sys_mat047')]
+      },
+      sourceOption() {
+        return ["",this.$t('sys_mat008'),this.$t('sys_mat009'),this.$t('sys_mat010'),this.$t('sys_mat011'),this.$t('sys_mat091'),this.$t('sys_mat092')]
       }
     },
     created() {
@@ -290,6 +341,7 @@
           this.dialogVisible =true;
         },
         scamperBtn(row,type){
+          this.materialData = row.material_list||[];
           this.blastForm.relpy_type=type;
           this.blastForm.relpy_id=row.id;
           this.blastForm.relpy_text=row.ad;
@@ -484,6 +536,18 @@
               that.$message({ type: 'info', message: that.$t('sys_c048') });
           })
         },
+        showSkyBtn(row){
+          this.taskForm.img=row.content;
+          this.imgModel = true;
+        },
+        closeViewer(e) {
+          this.imgModel = false;
+        },
+        cloneImgpreview(e) {
+          if (e.target.getAttribute('class') === 'el-image-viewer__mask') {
+            this.imgModel = false;
+          }
+        },
         exportText(row){
           doouttaskexcel({id:row.id}).then(res=>{
             if (res.code != 0) return;
@@ -497,6 +561,19 @@
   <style scoped lang="scss">
   .continer_main {
     width: 100%;
+  }
+  .content_01{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .audio_src{
+    width: 140px;
+    height: 30px;
+  }
+  .content_02{
+    width: 44px;
+    height: 28px;
   }
   </style>
     

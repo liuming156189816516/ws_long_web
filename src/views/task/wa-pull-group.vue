@@ -48,6 +48,11 @@
               <el-table-column prop="data_pack_name" :label="$t('sys_rai090')" width="120" />
               <el-table-column prop="ad" show-overflow-tooltip :label="$t('sys_rai091')" minWidth="120" />
               <el-table-column prop="zq_num" :label="$t('sys_rai095')" minWidth="100" />
+              <!-- <el-table-column prop="is_announcement" :label="$t('sys_q131')" minWidth="100">
+                <template slot-scope="scope">
+                  <el-button class="jump_un_link"type="text" :disabled="!scope.row.material_list" @click.stop="scamperBtn(scope.row,1)">{{ scope.row.material_list==null?0:scope.row.material_list.length }}</el-button>
+                </template>
+              </el-table-column> -->
               <el-table-column prop="qnum" :label="$t('sys_rai092')" width="120" />
               <el-table-column prop="pull_num" :label="$t('sys_rai093')" width="120" />
               <el-table-column prop="avg_num" :label="$t('sys_rai099')" width="120" />
@@ -75,7 +80,7 @@
               <el-table-column fixed="right" :label="$t('sys_c010')" width="180">
                   <template slot-scope="scope">
                     <!-- <el-button :disabled="checkIdArry.length>0" type="primary" size="mini" @click.stop="exportText(scope.row)">{{ $t('sys_rai079') }}</el-button> -->
-                    <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="scamperBtn(scope.row)">{{ $t('sys_rai098') }}</el-button>
+                    <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="scamperBtn(scope.row,2)">{{ $t('sys_rai098') }}</el-button>
                     <el-button :disabled="checkIdArry.length>0" type="success" plain size="mini" @click.stop="goTaskDetail(scope.row)">{{ $t('sys_rai080') }}</el-button>
                   </template>
               </el-table-column>
@@ -87,25 +92,61 @@
           </div>
           <!-- <el-pagination :total="model1.total" style="display: none;" /> -->
         </div>
-        <el-dialog :title="$t('sys_rai098')" :visible.sync="dialogVisible" width="560px" center>
-          <el-form :model="taskForm" size="small" :rules="taskRules" ref="taskForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item :label="$t('sys_rai104')+'：'" prop="relpy_text">
-              <el-input type="textarea" clearable v-model="taskForm.relpy_text" :placeholder="$t('sys_g129')" rows="8" />
-            </el-form-item>
-            <el-form-item>
-              <div class="el-item-right">
-                <el-button @click="dialogVisible=false">{{ $t('sys_c023') }}</el-button>
-                <el-button type="primary" :loading="isLoading" @click="submitForm('taskForm')">{{ $t('sys_c024') }}</el-button>
-              </div>
-            </el-form-item>
-          </el-form>
+        <el-dialog :title="taskForm.relpy_type==2?$t('sys_rai098'):$t('sys_q131')" :visible.sync="dialogVisible" width="560px" center>
+          <template v-if="taskForm.relpy_type==2">
+            <el-form :model="taskForm" size="small" :rules="taskRules" ref="taskForm" label-width="100px" class="demo-ruleForm">
+              <el-form-item :label="$t('sys_rai104')+'：'" prop="relpy_text">
+                <el-input type="textarea" clearable v-model="taskForm.relpy_text" :placeholder="$t('sys_g129')" rows="8" />
+              </el-form-item>
+              <el-form-item>
+                <div class="el-item-right">
+                  <el-button @click="dialogVisible=false">{{ $t('sys_c023') }}</el-button>
+                  <el-button type="primary" :loading="isLoading" @click="submitForm('taskForm')">{{ $t('sys_c024') }}</el-button>
+                </div>
+              </el-form-item>
+            </el-form>
+          </template>
+          <template v-else>
+            <el-table :data="materialData" :header-cell-style="{ color: '#909399', textAlign: 'center' }" :cell-style="{ textAlign: 'center' }" style="width: 100%">
+                <el-table-column type="index" :label="$t('sys_g020')"></el-table-column>
+                <el-table-column prop="type" :label="$t('sys_g091')" minWidth="120">
+                    <template slot-scope="scope">
+                        <span>{{ sourceOption[scope.row.type]}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="content" :label="$t('sys_mat019')" minWidth="100">
+                    <template slot-scope="scope">
+                        <span class="content_01" v-if="scope.row.type==1||scope.row.type==5||scope.row.type==6||scope.row.type==7">{{ scope.row.content }}</span>
+                        <img class="content_02" v-if="scope.row.type==2" :src="scope.row.content" alt="" srcset="">
+                        <audio v-if="scope.row.type==3" controls class="audio_src">
+                            <source :src="scope.row.content" type="audio/mpeg">
+                        </audio>
+                        <video v-if="scope.row.type==4" width="60" height="35" controls>
+                            <source :src="scope.row.content" type="video/mp4">
+                        </video>
+                    </template>
+                </el-table-column>
+                <!-- <el-table-column prop="address" :label="$t('sys_c010')" width="120">
+                    <template slot-scope="scope">
+                        <el-button class="custom_btn" size="mini" v-if="scope.row.type!=5" @click="editScript(scope.row,scope)">
+                            <i class="el-icon-edit" />
+                        </el-button>
+                        <el-button class="custom_btn" size="mini" @click="delScript(scope)">
+                            <i class="el-icon-delete-solid" />
+                        </el-button>
+                    </template>
+                </el-table-column> -->
+            </el-table>
+          </template>
         </el-dialog>
+        <el-image-viewer v-if="imgModel" :on-close="closeViewer" style="z-index:9999" @click.native="cloneImgpreview" :url-list="[taskForm.img]" />
     </div>
   </template>
   <script>
   import { successTips } from '@/utils/index'
   import { groupsendmsg,getpullgrouptasklist,dobatchdelpullgrouptask,dobatchstoppullgrouptask,dobatchclosepullgrouptask,getsysconfig,upsysconfig} from '@/api/task'
   export default {
+    components: {'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
     data() {
       return {
         model1: {
@@ -116,16 +157,19 @@
           task_name: "",
         },
         taskForm:{
+          img:"",
           relpy_type:"",
           relpy_id:"",
           relpy_text:"",
         },
+        imgModel:false,
         loading:false,
         isLoading:false,
         auto_scamper:false,
         checkIdArry:[],
         taskDataList:[],
         showNum:[10],
+        materialData:[],
         dialogVisible:false
       }
     },
@@ -149,6 +193,9 @@
       },
       statusOptions(){
         return ["",this.$t('sys_l071'),this.$t('sys_l072'),this.$t('sys_g068'),this.$t('sys_rai078'),this.$t('sys_mat047')]
+      },
+      sourceOption() {
+          return ["",this.$t('sys_mat008'),this.$t('sys_mat009'),this.$t('sys_mat010'),this.$t('sys_mat011'),this.$t('sys_mat091'),this.$t('sys_mat092')]
       }
     },
     created() {
@@ -170,6 +217,7 @@
           this.taskForm.relpy_type=type;
           this.taskForm.relpy_id=row.id;
           this.taskForm.relpy_text=row.ad;
+          this.materialData = row.material_list||[];
           this.dialogVisible=true;
         },
         getPullTaskList(num){
@@ -346,6 +394,18 @@
               that.$message({ type: 'info', message: that.$t('sys_c048') });
           })
         },
+        showSkyBtn(row){
+          this.taskForm.img=row.content;
+          this.imgModel = true;
+        },
+        closeViewer(e) {
+          this.imgModel = false;
+        },
+        cloneImgpreview(e) {
+          if (e.target.getAttribute('class') === 'el-image-viewer__mask') {
+            this.imgModel = false;
+          }
+        },
         exportText(row){
           doouttaskexcel({id:row.id}).then(res=>{
             if (res.code != 0) return;
@@ -359,6 +419,19 @@
   <style scoped lang="scss">
   .continer_main {
     width: 100%;
+  }
+  .content_01{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .audio_src{
+    width: 140px;
+    height: 30px;
+  }
+  .content_02{
+    width: 44px;
+    height: 28px;
   }
   </style>
     

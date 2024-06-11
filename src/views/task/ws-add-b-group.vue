@@ -132,6 +132,45 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="18">
+                        <el-form-item :label="$t('sys_q131')+'：'" prop="materialData" class="custom_say">
+                            <div class="mess_01">
+                                <el-button type="primary" size="mini" v-for="(item,idx) in btnOption" :key="idx" @click="showPropModel(idx)" v-show="item!=''">{{ item }}</el-button>
+                                <el-table :data="taskForm.materialData" :header-cell-style="{ color: '#909399', textAlign: 'center' }" :cell-style="{ textAlign: 'center' }" style="width: 100%">
+                                    <el-table-column type="index" :label="$t('sys_g020')"></el-table-column>
+                                    <el-table-column prop="type" :label="$t('sys_g091')" minWidth="120">
+                                        <template slot-scope="scope">
+                                            <span>{{ sourceOption[scope.row.type]}}</span>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="content" :label="$t('sys_mat019')" minWidth="100">
+                                        <template slot-scope="scope">
+                                            <span class="content_01" v-if="scope.row.type==1||scope.row.type==5||scope.row.type==6||scope.row.type==7">{{ scope.row.content }}</span>
+                                            <img class="content_02" v-if="scope.row.type==2" :src="scope.row.content" alt="" srcset="">
+                                            <audio v-if="scope.row.type==3" controls class="audio_src">
+                                                <source :src="scope.row.content" type="audio/mpeg">
+                                            </audio>
+                                            <video v-if="scope.row.type==4" width="60" height="35" controls>
+                                                <source :src="scope.row.content" type="video/mp4">
+                                            </video>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="address" :label="$t('sys_c010')" width="120">
+                                        <template slot-scope="scope">
+                                            <el-button class="custom_btn" size="mini" v-if="scope.row.type!=5" @click="editScript(scope.row,scope)">
+                                                <i class="el-icon-edit" />
+                                            </el-button>
+                                            <el-button class="custom_btn" size="mini" @click="delScript(scope)">
+                                                <i class="el-icon-delete-solid" />
+                                            </el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </div>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
                 <el-form-item>
                     <el-button @click="$router.go(-1)">{{ $t('sys_c023') }}</el-button>
                     <el-button type="primary" :loading="isLoading" @click="submitForm('taskForm')">开始拉群</el-button>
@@ -139,21 +178,26 @@
             </el-form>
         </div>
         <el-image-viewer v-if="imgModel" :on-close="closeViewer" @click.native="cloneImgpreview" :url-list="[taskForm.qavatar]" />
+        <el-dialog :title="$t('sys_mat108')" center :visible.sync="showSource" :close-on-click-modal="false" width="60%">
+            <material :key="source_type==1?Math.floor(new Date().getTime()):''" @changeEle="getChildren" @closeDialog="showSource=false" :message="childMess" />
+        </el-dialog>
     </div>
   </template>
   
   <script>
   import { successTips } from '@/utils/index'
   import { getdatapacklist } from '@/api/datamanage'
+  import material from '../content/material.vue';
   import { materialFile} from '@/api/article'
   import { addbiggrouptask,getbiggroupgroup } from '@/api/task'
   export default {
-    components: { 'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
+    components: {material,'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
     data() {
       return {
         totalNum:0,
         source_type:"",
         is_index:"",
+        source_id:"",
         isUpload:false,
         imgModel:false,
         showLink:false,
@@ -197,7 +241,8 @@
             match_num:"",
             invite_link:"",
             relpy_text:"",
-            data_pack_id:""
+            data_pack_id:"",
+            materialData:[],
         },
         datapackList:[],
         accountOptions:[],
@@ -229,6 +274,12 @@
                 data_pack_id: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
                 relpy_text: [{ required: true, message: this.$t('sys_mat021'), trigger: 'blur' },{ max: 2000, message: '最多可输入2000个字符', trigger: 'blur' }],
             }
+        },
+        btnOption(){
+            return ["",this.$t('sys_mat093')]
+        },
+        sourceOption() {
+            return ["",this.$t('sys_mat008'),this.$t('sys_mat009'),this.$t('sys_mat010'),this.$t('sys_mat011'),this.$t('sys_mat091'),this.$t('sys_mat092')]
         }
     },
     created(){
@@ -246,18 +297,6 @@
         async getDatalist() {
             const { data:{list} } = await getdatapacklist({page:1,limit:300});
             this.datapackList = list || [];
-        },
-        getChildren(msg){
-            this.showSource=false;
-            if (this.source_id) {
-                for (let k = 0; k < this.taskForm.materialData.length; k++) {
-                    if (this.taskForm.materialData[k].id == this.source_id) {
-                        this.taskForm.materialData[k] = JSON.parse(msg)
-                    }
-                }
-            }else{
-                this.taskForm.materialData.push(JSON.parse(msg))
-            }
         },
         changeAccountNum(){
             let numbers = this.accountGroupList.filter(item => {return item.group_id == this.taskForm.group_id});
@@ -295,7 +334,8 @@
                         target_num:Number(this.taskForm.target_num),
                         match_num:Number(this.taskForm.match_num),
                         invite_link:this.taskForm.invite_link,
-                        ad:this.taskForm.relpy_text
+                        ad:this.taskForm.relpy_text,
+                        material_list:this.taskForm.materialData
                     }
                     this.isLoading=true;
                     addbiggrouptask(params).then(res => {
@@ -317,7 +357,50 @@
             if (e.target.getAttribute('class') === 'el-image-viewer__mask') {
                 this.imgModel = false;
             }
-        }
+        },
+        showPropModel(type){
+            this.is_index = "";
+            this.source_id = "";
+            this.source_type = type;
+            this.childMess.type="";
+            this.showSource=true;
+        },
+        getChildren(msg){
+            this.showSource=false;
+            if (this.source_id) {
+                for (let k = 0; k < this.taskForm.materialData.length; k++) {
+                    if (this.taskForm.materialData[k].id == this.source_id) {
+                        this.$set(this.taskForm.materialData,k,JSON.parse(msg))
+                    }
+                }
+            }else{
+                this.taskForm.materialData.push(JSON.parse(msg))
+            }
+        },
+        editScript(row,idx){
+            console.log(row);
+            if (row.type == 6) {
+                this.showLink = true;
+                this.is_index = idx.$index;
+                this.$nextTick(()=>{
+                    this.linkForm.card_text = row.content;
+                    // this.linkForm.link_title = row.content;
+                    // this.linkForm.link_address = row.content; 
+                })
+            }else{
+                this.source_type = 1;
+                this.source_id = row.id;
+                this.childMess.type=String(row.type);
+                this.showSource=true;
+            }
+        },
+        delScript(row){
+            for (let k = 0; k < this.taskForm.materialData.length; k++) {
+                if (k === row.$index) {
+                    this.taskForm.materialData.splice(k,1)
+                }
+            }
+        },
     }
   }
   </script>
