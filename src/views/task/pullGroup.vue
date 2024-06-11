@@ -90,12 +90,12 @@
                         <i class="el-icon-arrow-down el-icon--right" />
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item :class="{'dropdown_selected':idx==model1.status}" v-for="(item,idx) in statusOptions" :key="idx" :command="idx">{{ item==''?$t('sys_l053'):item }}</el-dropdown-item>
+                      <el-dropdown-item :class="{'dropdown_selected':idx==model1.status}" v-for="(item,idx) in statusOptions" :key="idx" :command="idx">{{ item==''?$t('sys_l053'):item }}</el-dropdown-item>
                     </el-dropdown-menu>
-                    </el-dropdown>
+                  </el-dropdown>
                 </template>
                 <template slot-scope="scope">
-                  <el-tag size="small" :type="scope.row.status==0||scope.row.status==1?'info':scope.row.status==2?'warning':scope.row.status==5?'success':'danger'"> {{ scope.row.status==0?statusOptions[1]:statusOptions[scope.row.status+1]||"-" }}</el-tag>
+                  <el-tag size="small" :type="scope.row.status==0||scope.row.status==1?'info':scope.row.status==2?'warning':scope.row.status==5?'success':'danger'"> {{ statusOptions[scope.row.status]||"-" }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column prop="zq_num" label="炸群次数" width="100" />
@@ -265,7 +265,7 @@
         return ["",this.$t('sys_rai002'),this.$t('sys_rai003'),this.$t('sys_rai004')]
       },
       statusOptions(){
-        return ["",this.$t('sys_q128'),this.$t('sys_l071'),this.$t('sys_l072'),this.$t('sys_g068'),this.$t('sys_rai078'),this.$t('sys_mat047')]
+        return ["",this.$t('sys_l071'),this.$t('sys_l072'),this.$t('sys_g068'),this.$t('sys_rai078'),this.$t('sys_mat047')]
       }
     },
     created() {
@@ -303,7 +303,7 @@
             page:this.model1.page,
             limit:this.model1.limit,
             name:this.model1.task_name,
-            status:this.model1.status>0?this.model1.status-1:-1
+            status:this.model1.status||-1
           }
           getbiggrouptasklist(params).then(res=>{
             this.loading=false;
