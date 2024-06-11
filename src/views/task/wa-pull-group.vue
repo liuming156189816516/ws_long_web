@@ -48,11 +48,11 @@
               <el-table-column prop="data_pack_name" :label="$t('sys_rai090')" width="120" />
               <el-table-column prop="ad" show-overflow-tooltip :label="$t('sys_rai091')" minWidth="120" />
               <el-table-column prop="zq_num" :label="$t('sys_rai095')" minWidth="100" />
-              <!-- <el-table-column prop="is_announcement" :label="$t('sys_q131')" minWidth="100">
+              <el-table-column prop="is_announcement" :label="$t('sys_q131')" minWidth="100">
                 <template slot-scope="scope">
                   <el-button class="jump_un_link"type="text" :disabled="!scope.row.material_list" @click.stop="scamperBtn(scope.row,1)">{{ scope.row.material_list==null?0:scope.row.material_list.length }}</el-button>
                 </template>
-              </el-table-column> -->
+              </el-table-column>
               <el-table-column prop="qnum" :label="$t('sys_rai092')" width="120" />
               <el-table-column prop="pull_num" :label="$t('sys_rai093')" width="120" />
               <el-table-column prop="avg_num" :label="$t('sys_rai099')" width="120" />
@@ -80,7 +80,7 @@
               <el-table-column fixed="right" :label="$t('sys_c010')" width="180">
                   <template slot-scope="scope">
                     <!-- <el-button :disabled="checkIdArry.length>0" type="primary" size="mini" @click.stop="exportText(scope.row)">{{ $t('sys_rai079') }}</el-button> -->
-                    <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="scamperBtn(scope.row,2)">{{ $t('sys_rai098') }}</el-button>
+                    <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="handleGroupBtn(scope.row,4)">{{ $t('sys_rai098') }}</el-button>
                     <el-button :disabled="checkIdArry.length>0" type="success" plain size="mini" @click.stop="goTaskDetail(scope.row)">{{ $t('sys_rai080') }}</el-button>
                   </template>
               </el-table-column>
@@ -117,12 +117,15 @@
                 <el-table-column prop="content" :label="$t('sys_mat019')" minWidth="100">
                     <template slot-scope="scope">
                         <span class="content_01" v-if="scope.row.type==1||scope.row.type==5||scope.row.type==6||scope.row.type==7">{{ scope.row.content }}</span>
-                        <img class="content_02" v-if="scope.row.type==2" :src="scope.row.content" alt="" srcset="">
+                        <div v-if="scope.row.type==2" style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+                          <img class="content_02" :src="scope.row.content" @click="showSkyBtn(scope.row)">
+                          <span style="display: flex;line-height: 1;margin-top: 3px;font-size: 12px;">{{ scope.row.remark }}</span>
+                        </div>
                         <audio v-if="scope.row.type==3" controls class="audio_src">
-                            <source :src="scope.row.content" type="audio/mpeg">
+                          <source :src="scope.row.content" type="audio/mpeg">
                         </audio>
                         <video v-if="scope.row.type==4" width="60" height="35" controls>
-                            <source :src="scope.row.content" type="video/mp4">
+                          <source :src="scope.row.content" type="video/mp4">
                         </video>
                     </template>
                 </el-table-column>
@@ -168,7 +171,7 @@
         auto_scamper:false,
         checkIdArry:[],
         taskDataList:[],
-        showNum:[10],
+        showNum:[11],
         materialData:[],
         dialogVisible:false
       }

@@ -147,7 +147,7 @@
               </el-table-column> -->
               <el-table-column fixed="right" :label="$t('sys_c010')" minWidth="180">
                   <template slot-scope="scope">
-                    <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="scamperBtn(scope.row,2)">{{ $t('sys_rai098') }}</el-button>
+                    <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="handleGroupBtn(scope.row,4)">{{ $t('sys_rai098') }}</el-button>
                     <el-button v-if="scope.row.status==1" :disabled="checkIdArry.length>0" :type="scope.row.status==1?'primary':'danger'" plain size="mini" @click.stop="handleTaskBtn(scope.row)">
                       <span v-text="scope.row.status==1?'启动任务':'关闭任务'"></span>
                     </el-button>
