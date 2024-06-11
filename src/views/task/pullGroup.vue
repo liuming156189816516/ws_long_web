@@ -147,7 +147,7 @@
               </el-table-column> -->
               <el-table-column fixed="right" :label="$t('sys_c010')" minWidth="180">
                   <template slot-scope="scope">
-                    <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="handleGroupBtn(scope.row,4)">{{ $t('sys_rai098') }}</el-button>
+                    <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="beforeOneBtn(scope.row)">{{ $t('sys_rai098') }}</el-button>
                     <el-button v-if="scope.row.status==1" :disabled="checkIdArry.length>0" :type="scope.row.status==1?'primary':'danger'" plain size="mini" @click.stop="handleTaskBtn(scope.row)">
                       <span v-text="scope.row.status==1?'启动任务':'关闭任务'"></span>
                     </el-button>
@@ -452,30 +452,30 @@
           that.$message({ type: 'info', message: that.$t('sys_c048') });
         })
       },
-        // scamperBtn(row){
-        //   let that = this;
-        //   that.$confirm(that.$t('sys_rai046',{value:that.$t('sys_rai098')}), that.$t('sys_l013'), {
-        //       type: 'warning',
-        //       confirmButtonText: that.$t('sys_c024'),
-        //       cancelButtonText: that.$t('sys_c023'),
-        //       beforeClose: function (action, instance, done) {
-        //           if (action === 'confirm') {
-        //             instance.confirmButtonLoading = true;
-        //             groupsendmsg({ids:[row.id]}).then(res=>{
-        //               instance.confirmButtonLoading = false;
-        //               if (res.code != 0) return;
-        //                 that.getPullTaskList(1);
-        //                 successTips(that)
-        //                 done();
-        //               })
-        //           } else {
-        //             done();
-        //           }
-        //       }
-        //   }).catch(() => {
-        //     that.$message({ type: 'info', message: that.$t('sys_c048') });
-        //   })
-        // },
+      beforeOneBtn(row){
+        let that = this;
+        that.$confirm(that.$t('sys_rai046',{value:that.$t('sys_rai098')}), that.$t('sys_l013'), {
+            type: 'warning',
+            confirmButtonText: that.$t('sys_c024'),
+            cancelButtonText: that.$t('sys_c023'),
+            beforeClose: function (action, instance, done) {
+                if (action === 'confirm') {
+                  instance.confirmButtonLoading = true;
+                  biggroupsendmsg({ids:[row.id]}).then(res=>{
+                    instance.confirmButtonLoading = false;
+                    if (res.code != 0) return;
+                      that.getPullTaskList(1);
+                      successTips(that)
+                      done();
+                    })
+                } else {
+                  done();
+                }
+            }
+        }).catch(() => {
+          that.$message({ type: 'info', message: that.$t('sys_c048') });
+        })
+      },
         handleSelectionChange(row) {
           this.checkIdArry = row.map(item => { return item.id })
         },
