@@ -402,7 +402,7 @@
           this.auto_scamper = auto_big_group==1?true:false;
         },
         async handleScamper(e){
-          const {code} = await upsysconfig({auto_big_group:this.auto_scamper?1:0});
+          const {code} = await upsysconfig({auto_pull_group:-1,auto_big_group:this.auto_scamper?1:0});
           if (code !=0 ) return;
           this.auto_scamper = e;
           successTips(this)
