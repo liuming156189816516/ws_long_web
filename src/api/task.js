@@ -108,6 +108,13 @@ export const getbiggrouppullaccountlist = (params) =>{
 export const biggroupsendmsg = (params) =>{
   return request({url:'/biggroup/biggroupsendmsg',method:'post',data:params})
 }
+export const doupautoad = (params) =>{
+  return request({url:'/pullgroup/doupautoad',method:'post',data:params})
+}
+export const upautoad = (params) =>{
+  return request({url:'/biggroup/upautoad',method:'post',data:params})
+}
+
 
 
 
