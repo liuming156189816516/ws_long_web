@@ -217,10 +217,14 @@
               </el-table-column>
               <el-table-column prop="content" :label="$t('sys_mat019')" minWidth="140">
                   <template slot-scope="scope">
-                      <span class="content_07" v-if="scope.row.type==1||scope.row.type==5||scope.row.type==6||scope.row.type==7">{{ scope.row.content }}</span>
-                      <div v-if="scope.row.type==2&&blastForm.relpy_type==1" style="display: flex;justify-content: center;align-items: center;">
+                      <el-tooltip effect="dark" :content="scope.row.content" placement="top">
+                        <span class="content_07" v-if="scope.row.type==1||scope.row.type==5||scope.row.type==6||scope.row.type==7">{{ scope.row.content }}</span>
+                      </el-tooltip>
+                      <div v-if="scope.row.type==2&&blastForm.relpy_type==1" style="display: flex;align-items: center;">
                         <img class="content_02" :src="scope.row.content" @click="showSkyBtn(scope.row)">
-                        <span class="content_07">{{ scope.row.remark }}</span>
+                        <el-tooltip effect="dark" :content="scope.row.remark" placement="top">
+                          <span class="content_07">{{ scope.row.remark||"-" }}</span>
+                        </el-tooltip>
                       </div>
                       <div v-if="scope.row.type==2&&blastForm.relpy_type==2" style="display: flex;justify-content: center;align-items: center;">
                         <img class="content_02" :src="scope.row.content" @click="showSkyBtn(scope.row)">
