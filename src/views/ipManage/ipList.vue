@@ -761,6 +761,7 @@ export default {
       this.getIpDetailList(1);
     },
     showIpDetail(row){
+      console.log(row);
       this.model2.ip_id = row.id;
       this.model2.proxy_ip = row.proxy_ip;
       this.alloctModel=true;
@@ -1115,6 +1116,7 @@ export default {
         this.ipForm.country="";
         this.ipForm.ip_time="";
         const _cascader = this.$refs.myCascader;
+        console.log(_cascader);
         if (_cascader) {
           _cascader.$refs.panel.activePath = [];
           _cascader.$refs.panel.checkedValue  = [];

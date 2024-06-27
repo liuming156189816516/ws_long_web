@@ -9,14 +9,37 @@
                 <el-row :gutter="20">
                     <el-col :span="18">
                         <el-form-item label="活动名称：" prop="task_name">
-                            <el-input clearable v-model="taskForm.task_name" maxlength="20" show-word-limit></el-input>
+                            <el-input clearable v-model="taskForm.task_name" maxlength="20" placeholder="请输入活动名称" show-word-limit></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
                     <el-col :span="18">
                         <el-form-item label="群名称：" prop="group_name">
-                            <el-input clearable v-model="taskForm.group_name" maxlength="20" show-word-limit></el-input>
+                            <el-input clearable v-model="taskForm.group_name" maxlength="20" placeholder="请输入群名称" show-word-limit></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="18">
+                        <el-form-item label="群描述：">
+                            <el-input clearable v-model="taskForm.qremark" placeholder="请输入群描述"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="18">
+                        <el-form-item label="群头像：">
+                            <div v-if="taskForm.qavatar" style="display: flex;align-items: center;">
+                                <img :src="taskForm.qavatar" style="width: 60px;height: 60px;cursor: pointer;margin-right: 10px;" @click="imgModel=true">
+                                <i class="el-icon-delete" style="font-size: 18px;; color:#f56c6c;cursor: pointer;" @click="taskForm.qavatar=''"></i>
+                            </div>
+                            <template v-else>
+                                <el-button class="custom_file1" :loading="isUpload" style="margin-top: 0;">
+                                    {{isUpload?$t('sys_q040'):$t('sys_c059') }}
+                                    <input type="file" ref='uploadclear' @change="checkDataIsUse" id="uploadFile" title=" " />
+                                </el-button>
+                            </template>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -82,7 +105,7 @@
                 </el-row> -->
                 <el-row :gutter="20">
                     <el-col :span="18">
-                        <el-form-item :label="$t('sys_q131')+'：'" prop="materialData" class="custom_say">
+                        <el-form-item :label="$t('sys_q130')+'：'" prop="materialData" class="custom_say">
                             <div class="mess_01">
                                 <el-button type="primary" size="mini" v-for="(item,idx) in btnOption" :key="idx" @click="showPropModel(idx)" v-show="item!=''">{{ item }}</el-button>
                                 <el-table :data="taskForm.materialData" :header-cell-style="{ color: '#909399', textAlign: 'center' }" :cell-style="{ textAlign: 'center' }" style="width: 100%">
@@ -107,7 +130,7 @@
                                             </video>
                                         </template>
                                     </el-table-column>
-                                    <!-- <el-table-column prop="address" :label="$t('sys_c010')" width="120">
+                                    <el-table-column prop="address" :label="$t('sys_c010')" width="120">
                                         <template slot-scope="scope">
                                             <el-button class="custom_btn" size="mini" v-if="scope.row.type!=5" @click="editScript(scope.row,scope)">
                                                 <i class="el-icon-edit" />
@@ -116,7 +139,7 @@
                                                 <i class="el-icon-delete-solid" />
                                             </el-button>
                                         </template>
-                                    </el-table-column> -->
+                                    </el-table-column>
                                 </el-table>
                             </div>
                         </el-form-item>
@@ -160,22 +183,25 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
+        <el-image-viewer v-if="imgModel" :on-close="closeViewer" @click.native="cloneImgpreview" :url-list="[taskForm.qavatar]" />
     </div>
   </template>
   
   <script>
   import { successTips } from '@/utils/index'
+  import { materialFile} from '@/api/article'
   import material from '../content/material.vue';
   import { getdatapacklist } from '@/api/datamanage'
-  import { getaccountgrouplist } from '@/api/storeroom'
   import { addpullgrouptask,getpullgroupgroup } from '@/api/task'
   export default {
-    components:{material},
+    components: {material,'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
     data() {
       return {
         totalNum:0,
         source_type:"",
         is_index:"",
+        imgModel:false,
+        isUpload:false,
         showLink:false,
         isLoading:false,
         showSource:false,
@@ -214,6 +240,7 @@
             ym_group_id:"",
             is_announcement:1,
             materialData:[],
+            qavatar:""
         },
         linkForm:{
             link_title:"",
@@ -239,8 +266,8 @@
                 pull_group: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
                 market_group: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
                 data_pack_id: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
-                materialData: [{required: true, required: true, message: this.$t('sys_c052'), trigger: 'change' }],
-                is_announcement: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }]
+                is_announcement: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
+                materialData: [{required: true, required: true, message: this.$t('sys_c052'), trigger: 'change' }]
             }
         },
         linkRules(){
@@ -293,6 +320,22 @@
             let numbers = this.accountGroupList.filter(item => {return item.group_id == this.taskForm.group_id});
             this.totalNum = numbers.reduce((sum, item) => sum + Number(item.online_num || 0), 0);
         },
+        async checkDataIsUse(e){
+            let imgFormat = ["jpg", "jpeg", "png"];
+            let files = this.$refs.uploadclear.files[0];
+            let fileSize = files.size / 1024 / 1024;
+            let fileType = files.name.split(".").pop();
+            if (fileSize > 1 || imgFormat.indexOf(fileType) == -1) {
+                this.$refs.uploadclear.value = null;
+                return successTips(this, "error", "请选择正确的文件");
+            }
+            let formData = new FormData();
+            formData.append('file', files);
+            this.isUpload = true;
+            const {data:{url}} = await materialFile(formData);
+            this.isUpload = false;
+            this.taskForm.qavatar = url;
+        },
         showPropModel(type){
             this.is_index = "";
             this.source_id = "";
@@ -327,6 +370,8 @@
                         // ad:this.taskForm.relpy_text,
                         name:this.taskForm.task_name,
                         qname:this.taskForm.group_name,
+                        qremark:this.taskForm.qremark,
+                        qavatar:this.taskForm.qavatar,
                         pull_group_id:this.taskForm.pull_group,
                         ad_group_id:this.taskForm.market_group,
                         ym_group_id:this.taskForm.ym_group_id,

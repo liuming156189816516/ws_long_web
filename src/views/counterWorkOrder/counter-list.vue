@@ -288,9 +288,9 @@
 
 <script>
 import clipboard from 'clipboard';
+import { getadmingrouplist } from '@/api/staff'
 import { getaccountgrouplist } from '@/api/storeroom'
 import { successTips, resetPage } from '@/utils/index'
-import { getadmingrouplist, getcustomeruserlist } from '@/api/staff'
 import { getsendmsginfolist, doouttaskrecordexcel } from '@/api/task'
 import { getworktasklist,getaccountlist,docreateworktask,doworkshunt,createShare,dobatchdelworktask,dobatchsetworktask,dobatchsetzeroingtime,doupworktask,cancelshare,setwordshare,setworkdiversion,getworkconf,getworkcustomerlist } from '@/api/counter'
 export default {

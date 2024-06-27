@@ -14,7 +14,7 @@
           <el-button type="primary" :disabled="checkIdArry.length==0" @click="handleGroupBtn(4)">{{ $t('sys_q111') }}</el-button>
         </el-form-item> -->
         <el-form-item>
-        <el-button type="primary" :disabled="checkIdArry.length==0" @click="handleGroupBtn(4)">{{ $t('sys_q111') }}</el-button>
+        <el-button type="primary" :disabled="checkIdArry.length==0" @click.stop="scamperBtn(0,4)">{{ $t('sys_q111') }}</el-button>
       </el-form-item>
         <el-form-item>
           <el-button type="danger" :disabled="checkIdArry.length==0" @click="handleGroupBtn(2)">{{ $t('sys_rai082') }}</el-button>
@@ -83,7 +83,7 @@
                   </el-tooltip>
                 </template>
             </el-table-column> -->
-            <el-table-column prop="match_num" :label="$t('sys_q131')" width="100">
+            <el-table-column prop="match_num" :label="$t('sys_q130')" width="100">
               <template slot-scope="scope">
                 <el-button class="jump_un_link"type="text" :disabled="!scope.row.material_list" @click.stop="scamperBtn(scope.row,1)">{{ scope.row.material_list==null?0:scope.row.material_list.length }}</el-button>
                 <!-- <div class="jump_un_link" @click.stop="scamperBtn(scope.row,1)"></div> -->
@@ -147,8 +147,8 @@
             </el-table-column> -->
             <el-table-column fixed="right" :label="$t('sys_c010')" minWidth="260">
                 <template slot-scope="scope">
-                  <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="beforeOneBtn(scope.row)">{{ $t('sys_rai098') }}</el-button>
-                  <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="scamperBtn(scope.row,2)">{{ $t('sys_q132') }}</el-button>
+                  <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="scamperBtn(scope.row,3)">{{ $t('sys_rai098') }}</el-button>
+                  <el-button :disabled="checkIdArry.length>0" type="primary" plain size="mini" @click.stop="scamperBtn(scope.row,2)">{{ $t('sys_q131') }}</el-button>
                   <el-button v-if="scope.row.status==1" :disabled="checkIdArry.length>0" :type="scope.row.status==1?'primary':'danger'" plain size="mini" @click.stop="handleTaskBtn(scope.row)">
                     <span v-text="scope.row.status==1?'启动任务':'关闭任务'"></span>
                   </el-button>
@@ -192,21 +192,29 @@
           </el-table>
         </template>
       </el-dialog>
-      <el-dialog class="custom_header" :title="taskForm.relpy_type==2?$t('sys_q132'):$t('sys_q131')" :visible.sync="blastDialog" :close-on-click-modal="false" width="560px" center>
-        <!-- <template v-if="blastForm.relpy_type==2">
-          <el-form :model="blastForm" size="small" :rules="blastRules" ref="blastForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item :label="$t('sys_rai104')+'：'" prop="relpy_text">
-              <el-input type="textarea" clearable v-model="blastForm.relpy_text" :placeholder="$t('sys_g129')" rows="8" />
-            </el-form-item>
-            <el-form-item>
-              <div class="el-item-right">
-                <el-button @click="blastDialog=false">{{ $t('sys_c023') }}</el-button>
-                <el-button type="primary" :loading="isLoading" @click="submitForm('blastForm')">{{ $t('sys_c024') }}</el-button>
-              </div>
-            </el-form-item>
-          </el-form>
-        </template> -->
-        <!-- <template v-else> -->
+      <el-dialog class="custom_header":title="blastForm.relpy_type==2?$t('sys_q131'):$t('sys_q130')" :visible.sync="blastDialog" :close-on-click-modal="false" :width="blastForm.explode_type==1&&blastForm.relpy_type==3?'400px':'560px'" center>
+        <el-form v-if="blastForm.relpy_type==3||blastForm.relpy_type==4" size="small" label-width="100px" class="demo-ruleForm">
+          <el-form-item :label="$t('sys_q132')+'：'" prop="explode_type">
+            <el-radio-group v-model="blastForm.explode_type">
+              <el-radio :label="1">默认</el-radio>
+              <el-radio :label="2">自定义</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+        <template v-if="blastForm.relpy_type==3||blastForm.relpy_type==4">
+          <template v-if="blastForm.explode_type==2">
+            <el-form :model="blastForm" size="small" :rules="blastRules" ref="blastForm" label-width="100px" class="demo-ruleForm">
+              <el-form-item :label="$t('sys_rai104')+'：'" prop="relpy_text">
+                <el-input type="textarea" clearable v-model="blastForm.relpy_text" :placeholder="$t('sys_g129')" rows="8" />
+              </el-form-item>
+            </el-form>
+          </template>
+          <div v-if="blastForm.relpy_type==3||blastForm.relpy_type==4" style="display: flex;justify-content: center;margin-top: 20px;">
+            <el-button size="small" @click="blastDialog=false">{{ $t('sys_c023') }}</el-button>
+            <el-button size="small" type="primary" :loading="isLoading" @click="submitForm('blastForm')">{{ $t('sys_c024') }}</el-button>
+          </div>
+        </template>
+        <template v-else>
           <el-button size="mini" type="primary" @click="showPropModel" icon="el-icon-plus" :disabled="materialData.length>=5" v-if="blastForm.relpy_type==2">{{ $t('sys_mat093') }}</el-button>
           <el-table :data="materialData" :header-cell-style="{ color: '#909399', textAlign: 'center' }" :cell-style="{ textAlign: 'center' }" style="width: 100%">
               <el-table-column type="index" :label="$t('sys_g020')"></el-table-column>
@@ -230,11 +238,12 @@
                         <img class="content_02" :src="scope.row.content" @click="showSkyBtn(scope.row)">
                         <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="scope.row.remark" style="margin-left: 5px;line-height: 1;" />
                       </div>
+
                       <audio v-if="scope.row.type==3" controls class="audio_src">
-                        <source :src="scope.row.content" type="audio/mpeg">
+                          <source :src="scope.row.content" type="audio/mpeg">
                       </audio>
                       <video v-if="scope.row.type==4" width="60" height="35" controls>
-                        <source :src="scope.row.content" type="video/mp4">
+                          <source :src="scope.row.content" type="video/mp4">
                       </video>
                   </template>
               </el-table-column>
@@ -242,24 +251,26 @@
                 <el-table-column prop="address" type="index" :label="$t('sys_c010')" width="120">
                   <template slot-scope="scope">
                       <el-button class="custom_btn" size="mini" v-if="scope.row.type!=5" @click="editScript(scope.row,scope)">
-                          <i class="el-icon-edit" />
+                        <i class="el-icon-edit" />
                       </el-button>
                       <el-button class="custom_btn" size="mini" @click="delScript(scope)">
-                          <i class="el-icon-delete-solid" />
+                        <i class="el-icon-delete-solid" />
                       </el-button>
                   </template>
                 </el-table-column>
               </template>
           </el-table>
+          <div class="content_07 custom_ad" v-if="blastForm.relpy_text">
+            <span>{{$t('sys_q130')+'：'}}</span>{{ blastForm.relpy_text }}</div>
           <div v-if="blastForm.relpy_type==2" class="blast_btn">
             <el-button size="small" @click="blastDialog=false">{{ $t('sys_c023') }}</el-button>
             <el-button size="small" type="primary" :loading="isLoading" :disabled="materialData.length==0" @click="handleUpdate">{{ $t('sys_c024') }}</el-button>
           </div>
-        <!-- </template> -->
+        </template>
       </el-dialog>
       <el-image-viewer v-if="imgModel" :on-close="closeViewer" style="z-index:9999" @click.native="cloneImgpreview" :url-list="[taskForm.img]" />
       <el-dialog :title="$t('sys_mat108')" center :visible.sync="showSource" :close-on-click-modal="false" width="60%">
-          <material :key="Math.floor(new Date().getTime())" @changeEle="getChildren" @closeDialog="showSource=false" :message="childMess" />
+        <material :key="Math.floor(new Date().getTime())" @changeEle="getChildren" @closeDialog="showSource=false" :message="childMess" />
       </el-dialog>
     </div>
 </template>
@@ -285,6 +296,7 @@ export default {
         img:""
       },
       blastForm:{
+        explode_type:1,
         relpy_type:null,
         relpy_text:"",
         relpy_id:"",
@@ -302,6 +314,7 @@ export default {
       isLoading:false,
       blastDialog:false,
       auto_scamper:false,
+      explodeDialog:false,
       source_type:null,
       matchDataList:[],
       checkIdArry:[],
@@ -312,14 +325,9 @@ export default {
     }
   },
   computed: {
-    taskRules() {
-      return {
-        relpy_text: [{ required: true, message: this.$t('sys_mat021'), trigger: 'blure' },{ max: 2000, message: '最多可输入2000个字符', trigger: 'blur' }],
-      }
-    },
     blastRules() {
       return {
-        relpy_text: [{ required: true, message: this.$t('sys_c052'), trigger: 'blure' }],
+        relpy_text: [{ required: true, message: this.$t('sys_mat021'), trigger: 'blure' }],
       }
     },
     moreOption(){
@@ -331,7 +339,8 @@ export default {
     groupRules() {
       return {
         group_id: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
-        plant_type: [{ required: true, message: this.$t('sys_c052'), trigger: 'blure' }],
+        plant_type: [{ required: true, message: this.$t('sys_mat021'), trigger: 'blure' }],
+        explode_type: [{ required: true, message: this.$t('sys_c052'), trigger: 'change' }],
         set_account: [{ required: true, message: this.$t('sys_mat061',{value:this.$t('sys_mat063')}), trigger: 'blure' }],
         set_name: [{ required: true, message: this.$t('sys_mat061',{value:this.$t('sys_mat062')}), trigger: 'blure' }],
         set_pwd: [{ required: true, message: this.$t('sys_mat061',{value:this.$t('sys_g031')}), trigger: 'blure' }]
@@ -413,11 +422,18 @@ export default {
         this.dialogVisible =true;
       },
       scamperBtn(row,type){
-        this.materialData = row.material_list||[];
+        console.log(type);
+        this.blastForm.explode_type=1;
         this.blastForm.relpy_type=type;
-        this.blastForm.relpy_id=row.id;
-        this.blastForm.relpy_text=row.ad;
+        if(type != 4){
+          this.blastForm.relpy_id=row.id;
+          this.blastForm.relpy_text=row.ad;
+          this.materialData = row.material_list||[];
+        }
         this.blastDialog=true;
+        // this.$nextTick(()=>{
+        //   this.$refs.blastForm.resetFields();
+        // })
       },
       getPullTaskList(num){
         this.loading=true;
@@ -480,21 +496,36 @@ export default {
         this.$router.push({path:'/wa-group-detail',query:{params:row,task_id:row.id}});
       },
       submitForm(formName){
-        this.$refs[formName].validate((valid) => {
-        if (valid) {
+      if(this.blastForm.explode_type == 2){
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+              this.isLoading=true;
+              let params ={
+                ad:this.blastForm.relpy_text,
+                ids:this.blastForm.relpy_type==4?this.checkIdArry:[this.blastForm.relpy_id]
+              }
+              biggroupsendmsg(params).then(res=>{
+                this.isLoading=false;
+                if (res.code !=0 ) return;
+                successTips(this)
+                this.getPullTaskList(1);
+                this.blastDialog=false;
+              })
+            } else {
+              console.log('error submit!!');
+              return false;
+            }
+          })
+        }else{
           this.isLoading=true;
-          biggroupsendmsg({ids:[this.blastForm.relpy_id],ad:this.blastForm.relpy_text}).then(res=>{
+          biggroupsendmsg({ids:this.blastForm.relpy_type==4?this.checkIdArry:[this.blastForm.relpy_id]}).then(res=>{
             this.isLoading=false;
             if (res.code !=0 ) return;
             successTips(this)
             this.getPullTaskList(1);
             this.blastDialog=false;
           })
-        } else {
-          console.log('error submit!!');
-          return false;
         }
-      })
     },
     handleTaskBtn(row){
       if(row.status !=1 )return;
@@ -522,28 +553,29 @@ export default {
       })
     },
     beforeOneBtn(row){
-      let that = this;
-      that.$confirm(that.$t('sys_rai046',{value:that.$t('sys_rai098')}), that.$t('sys_l013'), {
-          type: 'warning',
-          confirmButtonText: that.$t('sys_c024'),
-          cancelButtonText: that.$t('sys_c023'),
-          beforeClose: function (action, instance, done) {
-              if (action === 'confirm') {
-                instance.confirmButtonLoading = true;
-                biggroupsendmsg({ids:[row.id]}).then(res=>{
-                  instance.confirmButtonLoading = false;
-                  if (res.code != 0) return;
-                    that.getPullTaskList(1);
-                    successTips(that)
-                    done();
-                  })
-              } else {
-                done();
-              }
-          }
-      }).catch(() => {
-        that.$message({ type: 'info', message: that.$t('sys_c048') });
-      })
+      this.explodeDialog =true;
+      // let that = this;
+      // that.$confirm(that.$t('sys_rai046',{value:that.$t('sys_rai098')}), that.$t('sys_l013'), {
+      //     type: 'warning',
+      //     confirmButtonText: that.$t('sys_c024'),
+      //     cancelButtonText: that.$t('sys_c023'),
+      //     beforeClose: function (action, instance, done) {
+      //         if (action === 'confirm') {
+      //           instance.confirmButtonLoading = true;
+      //           biggroupsendmsg({ids:[row.id]}).then(res=>{
+      //             instance.confirmButtonLoading = false;
+      //             if (res.code != 0) return;
+      //               that.getPullTaskList(1);
+      //               successTips(that)
+      //               done();
+      //             })
+      //         } else {
+      //           done();
+      //         }
+      //     }
+      // }).catch(() => {
+      //   that.$message({ type: 'info', message: that.$t('sys_c048') });
+      // })
     },
       handleSelectionChange(row) {
         this.checkIdArry = row.map(item => { return item.id })
@@ -645,9 +677,9 @@ export default {
   height: 30px;
 }
 .content_02{
+  display: flex;
   width: 44px;
   height: 28px;
-  display: flex;
   flex-shrink: 0;
 }
 .content_07{
@@ -660,6 +692,14 @@ export default {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.custom_ad{
+  line-height: 1.5;
+  margin-top: 20px;
+  span{
+    font-weight: bold; 
+    color:rgb(144, 147, 153);
+  }
 }
 .blast_btn{
   display: flex;

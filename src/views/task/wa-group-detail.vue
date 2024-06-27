@@ -50,11 +50,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="member_num" :label="$t('sys_q018')" minWidth="100" />
-        </el-table-column>
         <el-table-column prop="qid" :label="$t('sys_rai087')" minWidth="120">
           <template slot-scope="scope">
             {{ scope.row.qid||"-" }}
           </template>
+        </el-table-column>
+        <el-table-column prop="invite_link" :label="$t('sys_q133')" minWidth="120">
+          <template slot-scope="scope"> {{ scope.row.invite_link||"-"}} </template>
         </el-table-column>
         <el-table-column prop="qname" :label="$t('sys_rai086')" minWidth="120">
           <template slot-scope="scope"> {{ scope.row.qname}} </template>

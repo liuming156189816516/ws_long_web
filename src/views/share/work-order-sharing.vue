@@ -13,18 +13,20 @@
                 </el-form>
             </div>
         </div>
-        <child-component ref="childen" :message="true" v-if="!isMask" />
+        <child-component ref="childen" :message="true" :pwd_type="pwd_type" @showMasker="listenChild" v-if="!isMask" />
     </div>
 </template>
 <script>
 import { cutParam } from '@/utils/index'
 import { checkpassword } from '@/api/login'
+import { MessageBox } from 'element-ui'
 import ChildComponent from '@/views/counterWorkOrder/ticket-details.vue'
 export default {
     components: { ChildComponent },
     data() {
         return {
             isMask: true,
+            pwd_type:1,
             isLoading:false,
             passForm: {
                 password: ""
@@ -55,6 +57,20 @@ export default {
         // }
     },
     methods: {
+        listenChild(val){
+            if(!val) return;
+            MessageBox.confirm(this.$t('sys_l010'),this.$t('sys_l013'), {
+                confirmButtonText:this.$t('sys_c024'),
+                closeOnClickModal:false, 
+                showCancelButton:false, 
+                showClose:false,
+                type: 'warning'
+            }).then(() => {
+                this.isMask = val;
+                localStorage.removeItem('check_uid');
+                localStorage.removeItem('check_pwd');
+            })
+        },
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
@@ -65,6 +81,8 @@ export default {
                         this.isMask = false;
                         this.isLoading = false;
                         localStorage.setItem('check_uid',params.uid);
+                        localStorage.setItem('check_pwd',this.passForm.password);
+                        // console.log(this.passForm.password);
                     })
                 } else {
                     console.log('error submit!!');

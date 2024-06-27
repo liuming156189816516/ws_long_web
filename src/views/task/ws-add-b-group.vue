@@ -134,7 +134,7 @@
                 </el-row> -->
                 <el-row :gutter="20">
                     <el-col :span="18">
-                        <el-form-item :label="$t('sys_q131')+'：'" prop="materialData" class="custom_say">
+                        <el-form-item :label="$t('sys_q130')+'：'" prop="materialData" class="custom_say">
                             <div class="mess_01">
                                 <el-button type="primary" size="mini" v-for="(item,idx) in btnOption" :key="idx" @click="showPropModel(idx)" v-show="item!=''">{{ item }}</el-button>
                                 <el-table :data="taskForm.materialData" :header-cell-style="{ color: '#909399', textAlign: 'center' }" :cell-style="{ textAlign: 'center' }" style="width: 100%">
@@ -323,6 +323,7 @@
             this.taskForm.qavatar = url;
         },
         submitForm(formName) {
+            console.log(this.taskForm.materialData);
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     let params = {
@@ -390,8 +391,8 @@
                 this.is_index = idx.$index;
                 this.$nextTick(()=>{
                     this.linkForm.card_text = row.content;
-                    // this.linkForm.link_title = row.content;
-                    // this.linkForm.link_address = row.content; 
+                    //this.linkForm.link_title = row.content;
+                    //this.linkForm.link_address = row.content; 
                 })
             }else{
                 this.source_type = 1;

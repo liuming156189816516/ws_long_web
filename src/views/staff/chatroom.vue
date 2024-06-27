@@ -111,8 +111,7 @@
                     <el-button size="small" type="primary" plain @click="staffCustomTop(item, 1)">
                       {{ topOption[item.is_top] }}
                     </el-button>
-                    <el-button size="small" type="primary" plain v-for="(label, idx) in labelOption" :key="idx"
-                      @click="accountHandle(item.account, idx)">{{ label }}</el-button>
+                    <el-button size="small" type="primary" plain v-for="(label, idx) in labelOption" :key="idx" @click="accountHandle(item.account, idx)">{{ label }}</el-button>
                   </div>
                 </div>
                 <div slot="reference" v-if="idx != 0"
@@ -122,8 +121,7 @@
                     <el-badge is-dot />
                   </div>
                   <div :class="['item_child', item.status == 2 ? 'item_no_line' : '']">
-                    <el-avatar v-if="item.head" shape="square" :class="{ 'grey_avatar': item.status != 2 }" :size="40"
-                      :src="item.head" />
+                    <el-avatar v-if="item.head" shape="square" :class="{ 'grey_avatar': item.status != 2 }" :size="40" :src="item.head" />
                     <span v-else> {{ idx }}</span>
                   </div>
                   <!-- <div class="news_circle" ></div> -->
@@ -1860,6 +1858,7 @@ export default {
       })
     },
     accountHandle(row, type) {
+      console.log(row);
       if (type == 0 || type == 1) {
         this.congifModel = true;
         this.onlineAccount = row;
@@ -1890,10 +1889,29 @@ export default {
         })
       }
       if (type == 3) {
-        doclearfans({ customer_id: this.customer_id, account: row }).then(res => {
-          if (res.code != 0) return;
-          successTips(this);
-        })
+        let that = this;
+        that.$confirm(that.$t('sys_q134'),that.$t('sys_l013'), {
+          type: 'warning',
+          confirmButtonText: that.$t('sys_c024'),
+          cancelButtonText: that.$t('sys_c023'),
+        beforeClose: function (action, instance, done) {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true;
+            doclearfans({ customer_id: that.customer_id, account: row }).then(res => {
+              instance.confirmButtonLoading = false;
+              if (res.code != 0) return;
+              that.initFriendList();
+              successTips(that)
+              done();
+            })
+          } else {
+            done();
+            instance.confirmButtonLoading = false;
+          }
+        }
+      }).catch(() => {
+        that.$message({ type: 'info', message: that.$t('sys_c048') });
+      })
       }
     },
     handleCommand(type) {

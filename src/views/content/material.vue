@@ -16,8 +16,7 @@
       </el-form-item>
       <el-form-item class="el-item-right" v-if="cardAcyive != 1 && msg_show != 1">
         <el-button class="custom_file1">{{$t('sys_c059')}}
-          <input type="file" ref='uploadclear' :accept="fileAccept[cardAcyive]" @change="uploadBtn" id="uploadFile"
-            title=" ">
+          <input type="file" ref='uploadclear' :accept="fileAccept[cardAcyive]" @change="uploadBtn" id="uploadFile" title=" ">
         </el-button>
       </el-form-item>
       <el-form-item class="el-item-right" v-if="cardAcyive == 1">

@@ -229,7 +229,16 @@ import { getUserInfo } from '@/utils/auth'
 import { successTips, resetPage,cutParam } from '@/utils/index'
 import { getworkaccountlist, getworktask,dodistributeaccount,dooutworkaccount } from '@/api/counter'
 export default {
-    props: { message: "" },
+    props: { 
+        message:{
+            type:Boolean,
+            default:false
+        },
+        pwd_type:{
+            type:Number,
+            default:null
+        }
+     },
     data() {
         return {
             page: 1,
@@ -238,6 +247,7 @@ export default {
             account_status: "",
             status: "",
             sort: "",
+            user_pwd: "",
             user_uid: "",
             query_type: "",
             sort_type: "",
@@ -374,6 +384,7 @@ export default {
             let urlObj = cutParam(location.href);
             this.work_id = urlObj.workId;
             this.user_uid = urlObj.uid;
+            this.user_pwd =  localStorage.getItem('check_pwd');
         }else{
             this.user_uid = getUserInfo().uid;
             this.work_id = this.$route.query.workId;
@@ -401,13 +412,20 @@ export default {
         },
         getStatistics(task) {
             let params = {
+                is_check_pwd:1,
                 id: this.work_id,
-                uid:this.user_uid
+                uid:this.user_uid,
+                password:this.user_pwd
             }
-            // if (task == 1) {
-                this.isLoading = true;  
-            // }
+            this.pwd_type!=1?delete params.password:"";
+            this.pwd_type!=1?delete params.is_check_pwd:"";
+            this.isLoading = true;  
             getworktask(params).then(res => {
+                this.isLoading = false;
+                if(res.code != 0 && this.pwd_type==1){
+                    clearInterval(this.workTimeTask);
+                    this.$emit("showMasker",true)
+                }
                 let vita = res.data;
                 this.reset_time = vita.reset_time || '~';
                 this.zeroing_time = vita.zeroing_time || "00:00";
@@ -424,7 +442,6 @@ export default {
                         item.num = vita.to_day_remove_fan_num || 0;
                     }
                 }
-                this.isLoading = false;
             })
         },
         getDetailList(num) {
